@@ -1,0 +1,35 @@
+.checkout {
+  padding: 2rem;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.checkout__table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 1rem;
+}
+
+.checkout__table th,
+.checkout__table td {
+  padding: 0.75rem;
+  border-bottom: 1px solid #e5e7eb;
+  text-align: left;
+}
+
+.checkout__form input {
+  display: block;
+  width: 100%;
+  max-width: 400px;
+  margin-bottom: 1rem;
+  padding: 0.5rem;
+}
+
+.checkout__form button {
+  padding: 0.5rem 1rem;
+  background: #2563eb;
+  color: white;
+  border: none;
+  border-radius: 0.375rem;
+  cursor: pointer;
+}
