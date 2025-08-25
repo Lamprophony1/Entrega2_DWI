@@ -131,7 +131,7 @@ Este proyecto incorpora un **backend basado en microservicios** desarrollado con
 
 ## ✅ Requisitos previos
 
-- [Java JDK 17+](https://adoptium.net/) 
+- [Java JDK 17+](https://www.oracle.com/java/technologies/downloads/#jdk24-windows) 
 - [Maven 3.9+](https://maven.apache.org/)
 - Node.js 22+ para el frontal.
 
