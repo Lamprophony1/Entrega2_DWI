@@ -2,12 +2,11 @@ package com.example.buscador.service;
 
 import com.example.buscador.model.Item;
 import com.example.buscador.repository.ItemRepository;
-import org.elasticsearch.index.query.BoolQueryBuilder;
-import org.elasticsearch.index.query.QueryBuilders;
-import org.elasticsearch.index.query.RangeQueryBuilder;
+import co.elastic.clients.elasticsearch._types.query_dsl.*;
+import co.elastic.clients.json.JsonData;
 import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
 import org.springframework.data.elasticsearch.core.SearchHit;
-import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
+import org.springframework.data.elasticsearch.client.elc.NativeQuery;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -41,28 +40,33 @@ public class ItemService {
     }
 
     public List<Item> search(String name, String description, Double minPrice, Double maxPrice, Boolean inStock) {
-        BoolQueryBuilder bool = QueryBuilders.boolQuery();
-        if (name != null) {
-            bool.must(QueryBuilders.matchQuery("name", name));
-        }
-        if (description != null) {
-            bool.must(QueryBuilders.matchQuery("description", description));
-        }
+        BoolQuery.Builder bool = QueryBuilders.bool();
+
+        if (name != null) bool.must(m -> m.match(t -> t.field("name").query(name)));
+        if (description != null) bool.must(m -> m.match(t -> t.field("description").query(description)));
+
         if (minPrice != null || maxPrice != null) {
-            RangeQueryBuilder range = QueryBuilders.rangeQuery("price");
-            if (minPrice != null) range.gte(minPrice);
-            if (maxPrice != null) range.lte(maxPrice);
-            bool.filter(range);
+            bool.filter(f -> f.range(r -> {
+                r.field("price");
+                if (minPrice != null) r.gte(JsonData.of(minPrice));
+                if (maxPrice != null) r.lte(JsonData.of(maxPrice));
+                return r;
+            }));
         }
+
         if (inStock != null) {
             if (inStock) {
-                bool.filter(QueryBuilders.rangeQuery("stock").gt(0));
+                bool.filter(f -> f.range(r -> r.field("stock").gt(JsonData.of(0))));
             } else {
-                bool.filter(QueryBuilders.termQuery("stock", 0));
+                bool.filter(f -> f.term(t -> t.field("stock").value(0)));
             }
         }
-        var query = new NativeSearchQueryBuilder().withQuery(bool).build();
-        return operations.search(query, Item.class).stream().map(SearchHit::getContent).toList();
+
+        NativeQuery query = NativeQuery.builder()
+                .withQuery(bool.build())
+                .build();
+        return operations.search(query, Item.class)
+                .map(SearchHit::getContent)
+                .toList();
     }
 }
-
