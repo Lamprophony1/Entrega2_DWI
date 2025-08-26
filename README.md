@@ -94,6 +94,27 @@ mvn -f backend/gateway test
 
 El frontend no dispone de pruebas automatizadas; el comando `npm test` no está definido.
 
+## ☁️ Despliegue en Railway y Vercel
+
+### Backend en Railway
+1. Conecta tu cuenta de GitHub en [Railway](https://railway.app/) y crea un proyecto nuevo.
+2. Añade un servicio por cada componente del backend usando su directorio como **Root Directory**:
+   - `backend/eureka-server` (puerto `8761`)
+   - `backend/buscador-service` (puerto `8081`)
+   - `backend/operador-service` (puerto `8082`)
+   - `backend/gateway` (puerto `8080`)
+   - `Elasticsearch` desde la imagen `docker.elastic.co/elasticsearch/elasticsearch:8.15.0` con `discovery.type=single-node` y `xpack.security.enabled=false`.
+3. Configura variables de entorno según corresponda:
+   - `SPRING_ELASTICSEARCH_URIS` → URL interna de Elasticsearch.
+   - `EUREKA_CLIENT_SERVICEURL_DEFAULTZONE` → `http://<eureka-service>:8761/eureka`.
+4. Activa **Deploy on Commit** para desplegar automáticamente tras cada push a la rama principal.
+
+### Frontend en Vercel
+1. Importa este repositorio en Vercel y selecciona la raíz del proyecto.
+2. Usa como comando de build `npm run build` y como directorio de salida `dist`.
+3. Define la variable `VITE_API_BASE` con el dominio público del gateway desplegado en Railway.
+4. Ejecuta el despliegue; Vercel generará una URL pública para el frontend.
+
 ## 🛠️ Uso manual de la API
 
 Con los servicios en marcha puedes probar la API con `curl` o Postman mediante el gateway (`http://localhost:8080`). Ejemplos:
