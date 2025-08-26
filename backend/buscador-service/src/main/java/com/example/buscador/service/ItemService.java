@@ -63,7 +63,7 @@ public class ItemService {
         }
 
         NativeQuery query = NativeQuery.builder()
-                .withQuery(bool.build())
+                .withQuery(q -> q.bool(bool.build()))
                 .build();
         return operations.search(query, Item.class)
                 .map(SearchHit::getContent)
