@@ -29,7 +29,6 @@
                 <scope>import</scope>
             </dependency>
         </dependencies>
-    </dependencyManagement>
 
     <modules>
         <module>eureka-server</module>
