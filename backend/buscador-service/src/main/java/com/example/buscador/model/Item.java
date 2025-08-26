@@ -30,7 +30,10 @@ public class Item {
     private Double price;
 
     @Field(type = FieldType.Integer)
-    private Integer stock;
+   private Integer stock;
+
+    @Field(type = FieldType.Keyword)
+    private String image;
 
     public Long getId() {
         return id;
