@@ -95,8 +95,16 @@ public class Item {
         return stock;
     }
 
-    public void setStock(Integer stock) {
+     public void setStock(Integer stock) {
         this.stock = stock;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
     }
 }
 
