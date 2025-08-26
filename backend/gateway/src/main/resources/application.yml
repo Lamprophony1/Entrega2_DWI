@@ -1,0 +1,25 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: api-gateway
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+      routes:
+        - id: buscador
+          uri: lb://buscador-service
+          predicates:
+            - Path=/items/**
+        - id: operador
+          uri: lb://operador-service
+          predicates:
+            - Path=/orders/**
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka

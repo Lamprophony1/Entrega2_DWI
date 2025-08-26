@@ -1,0 +1,20 @@
+.expandable-text {
+  font-size: 0.95rem;
+  line-height: 1.4;
+  color: #444;
+  margin-bottom: 3rem;
+}
+
+.expandable-text__btn {
+  background: none;
+  border: none;
+  color: #007bff;
+  font-size: 0.9rem;
+  cursor: pointer;
+  padding: 0;
+  text-decoration: underline;
+}
+
+.expandable-text__btn:hover {
+  color: #0056b3;
+}
