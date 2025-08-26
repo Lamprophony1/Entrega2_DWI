@@ -2,13 +2,12 @@ import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useShopStore } from '../store/useShopStore';
 import '../styles/order-detail.css';
+import { fetchOrder } from '../services/api';
 
 export default function OrderDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
 
-  const orders      = useShopStore(state => state.orders);
-  const updateOrder = useShopStore(state => state.updateOrder);
   const addReturn   = useShopStore(state => state.addReturn);
 
   const [order, setOrder] = useState(null);
@@ -16,17 +15,19 @@ export default function OrderDetail() {
   const [saved, setSaved] = useState(false);
 
   useEffect(() => {
-    
-    const found = orders.find(o => o.id === id);
-    if (!found) return navigate('/orders');
-    setOrder(found);
-
-    const initialQty = {};
-    found.items.forEach(item => {
-      initialQty[item.id] = 0;
+    fetchOrder(id).then(data => {
+      if (!data || !data.id) {
+        navigate('/orders');
+        return;
+      }
+      setOrder(data);
+      const initial = {};
+      data.items.forEach(it => {
+        initial[it.id] = 0;
+      });
+      setQty(initial);
     });
-    setQty(initialQty);
-  }, [orders, id, navigate]);
+  }, [id, navigate]);
 
 
   if (!order) return null;
@@ -43,19 +44,6 @@ export default function OrderDetail() {
       alert('No se seleccionó ninguna cantidad válida para devolución.');
       return;
     }
-
-    const updatedItems = order.items
-      .map(item => {
-        const returnQty = qty[item.id];
-        if (!returnQty) return item;
-        return { ...item, quantity: item.quantity - returnQty };
-      })
-      .filter(item => item.quantity > 0);
-
-    updateOrder({
-      ...order,
-      items: updatedItems,
-    });
 
     addReturn({
       id: Date.now(),

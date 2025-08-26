@@ -1,0 +1,54 @@
+version: "3.9"
+services:
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.15.0
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+    ports:
+      - "9200:9200"
+
+  eureka:
+    build:
+      context: ./backend
+      dockerfile: eureka-server/Dockerfile
+    ports:
+      - "8761:8761"
+
+  buscador:
+    build:
+      context: ./backend
+      dockerfile: buscador-service/Dockerfile
+    ports:
+      - "8081:8081"
+    environment:
+      - SPRING_ELASTICSEARCH_URIS=http://elasticsearch:9200
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka:8761/eureka
+    depends_on:
+      - elasticsearch
+      - eureka
+
+  operador:
+    build:
+      context: ./backend
+      dockerfile: operador-service/Dockerfile
+    ports:
+      - "8082:8082"
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka:8761/eureka
+    depends_on:
+      - eureka
+
+  gateway:
+    build:
+      context: ./backend
+      dockerfile: gateway/Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka:8761/eureka
+    depends_on:
+      - buscador
+      - operador
+      - eureka
+

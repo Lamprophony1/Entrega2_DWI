@@ -1,16 +1,25 @@
 
+import { useEffect, useState } from 'react';
 import ProductCard from '../components/ProductCard';
-import productsData from '../data/products';
-import '../styles/home.css'; // aquí pondremos la cuadrícula
+import '../styles/home.css';
 import { useShopStore } from '../store/useShopStore';
-import { useSearch } from '../hooks/useSearch';
+import { fetchItems, searchItems } from '../services/api';
 
 
 export default function Home() {
 
   const addToCart = useShopStore(state => state.addToCart);
 
-  const { filtered, query, setQuery } = useSearch(productsData);
+  const [products, setProducts] = useState([]);
+  const [query, setQuery] = useState('');
+
+  useEffect(() => {
+    const load = async () => {
+      const data = query ? await searchItems(query) : await fetchItems();
+      setProducts(data);
+    };
+    load();
+  }, [query]);
 
   const handleAdd = product => {
     addToCart(product);
@@ -28,11 +37,11 @@ export default function Home() {
         onChange={e => setQuery(e.target.value)}
       />
 
-      {filtered.length === 0 ? (
+      {products.length === 0 ? (
         <p className="home__empty">No se encontraron productos.</p>
       ) : (
         <div className="home__grid">
-          {filtered.map(prod => (
+          {products.map(prod => (
             <ProductCard
               key={prod.id}
               product={prod}

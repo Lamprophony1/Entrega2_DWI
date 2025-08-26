@@ -4,18 +4,8 @@ server:
 spring:
   application:
     name: buscador-service
-  datasource:
-    url: jdbc:h2:mem:buscadordb
-    driverClassName: org.h2.Driver
-    username: sa
-    password:
-  jpa:
-    hibernate:
-      ddl-auto: update
-    show-sql: true
-  h2:
-    console:
-      enabled: true
+  elasticsearch:
+    uris: http://elasticsearch:9200
 
 eureka:
   client:

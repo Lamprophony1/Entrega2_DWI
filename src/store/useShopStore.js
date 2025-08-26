@@ -7,7 +7,6 @@ export const useShopStore = create(
     (set) => ({
       /* --------------- STATE --------------- */
       cart: [],
-      orders: [],
       returns: [],
 
       /* --------------- CART --------------- */
@@ -37,14 +36,7 @@ export const useShopStore = create(
         })),
       clearCart: () => set({ cart: [] }),
 
-      /* --------------- ORDERS / RETURNS --------------- */
-      addOrder: order => set(state => ({ orders: [...state.orders, order] })),
-      updateOrder: updated =>
-        set(state => ({
-          orders: state.orders
-            .map(o => (o.id === updated.id ? updated : o))
-            .filter(o => o.items.length > 0),
-        })),
+      /* --------------- RETURNS --------------- */
       addReturn: ret => set(state => ({ returns: [...state.returns, ret] })),
 
     }),

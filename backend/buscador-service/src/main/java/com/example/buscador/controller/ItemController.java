@@ -5,7 +5,6 @@ import com.example.buscador.service.ItemService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 @RestController
@@ -53,8 +52,8 @@ public class ItemController {
     @GetMapping("/search")
     public List<Item> search(@RequestParam(required = false) String name,
                              @RequestParam(required = false) String description,
-                             @RequestParam(required = false) BigDecimal minPrice,
-                             @RequestParam(required = false) BigDecimal maxPrice,
+                             @RequestParam(required = false) Double minPrice,
+                             @RequestParam(required = false) Double maxPrice,
                              @RequestParam(required = false) Boolean inStock) {
         return service.search(name, description, minPrice, maxPrice, inStock);
     }

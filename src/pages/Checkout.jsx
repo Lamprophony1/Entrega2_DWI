@@ -3,13 +3,13 @@ import { useShopStore } from '../store/useShopStore';
 import { selectTotalPrice } from '../store/selectors';
 import { useState } from 'react';
 import '../styles/checkout.css';
+import { createOrder } from '../services/api';
 
 export default function Checkout() {
   const cart = useShopStore(state => state.cart);
   const updateQty = useShopStore(state => state.updateQty);
   const removeFromCart  = useShopStore(state => state.removeFromCart);
   const clearCart = useShopStore(state => state.clearCart);
-  const addOrder = useShopStore(state => state.addOrder);
   const totalPrice = useShopStore(selectTotalPrice);
 
   const [name, setName] = useState('');
@@ -17,24 +17,19 @@ export default function Checkout() {
   const [orderSuccess, setOrderSuccess] = useState(false);
   const [orderCode, setOrderCode] = useState('');
 
-  const handleOrder = () => {
+  const handleOrder = async () => {
     if (!name || !email || cart.length === 0) {
       alert('Por favor, completa todos los campos y agrega productos.');
       return;
     }
-
-    const order = {
-      id: crypto.randomUUID(), // código único
+    const order = await createOrder({
       name,
       email,
       items: cart,
       total: totalPrice,
       date: new Date().toISOString(),
-    };
-
-    addOrder(order);
+    });
     clearCart();
-
     setOrderCode(order.id);
     setOrderSuccess(true);
   };
