@@ -11,6 +11,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 @Service
 public class ItemService {
@@ -28,7 +30,8 @@ public class ItemService {
     }
 
     public List<Item> findAll() {
-        return (List<Item>) repository.findAll();
+        return StreamSupport.stream(repository.findAll().spliterator(), false)
+                            .collect(Collectors.toList());
     }
 
     public Optional<Item> findById(Long id) {
