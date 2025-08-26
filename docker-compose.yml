@@ -6,6 +6,12 @@ services:
       - xpack.security.enabled=false
     ports:
       - "9200:9200"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://elasticsearch:9200"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      
 
   eureka:
     build:
@@ -24,8 +30,10 @@ services:
       - SPRING_ELASTICSEARCH_URIS=http://elasticsearch:9200
       - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka:8761/eureka
     depends_on:
-      - elasticsearch
-      - eureka
+      elasticsearch:
+        condition: service_healthy
+      eureka:
+        condition: service_started
 
   operador:
     build:
